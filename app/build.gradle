@@ -1,8 +1,18 @@
 apply plugin: 'com.android.application'
 
+Properties props = new Properties()
+props.load(new FileInputStream(file(project.rootProject.file("local.properties"))))
+
 android {
+    signingConfigs {
+        czodroid {
+            keyAlias props["key.alias"]
+            keyPassword props["key.store.password"]
+            storeFile file(props["key.store"])
+            storePassword props["key.alias.password"]
+        }
+    }
     compileSdkVersion 25
-    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "org.czo.flashweb"
         minSdkVersion 19
@@ -15,16 +25,18 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.czodroid
         }
     }
+    namespace 'org.czo.flashweb'
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.0'
-    compile 'com.android.support:support-v4:25.3.0'
-    testCompile 'junit:junit:4.12'
+    implementation 'com.android.support:appcompat-v7:25.3.0'
+    implementation 'com.android.support:support-v4:25.3.0'
+    testImplementation 'junit:junit:4.12'
 }
